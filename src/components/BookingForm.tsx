@@ -27,11 +27,9 @@ const BookingForm = ({ car }: { car: Car }) => {
 
   const days = pickupDate && returnDate ? differenceInDays(returnDate, pickupDate) : 0;
   const totalCost = days > 0 ? days * car.price : 0;
-  // Fixed conversion: $120 per day = ₹2000 per day
-  const fixedUsd = 120;
-  const fixedInr = 2000;
-  // Calculate per-day INR based on USD price
-  const perDayInr = car.price === fixedUsd ? fixedInr : Math.round((car.price / fixedUsd) * fixedInr);
+  // Proportional conversion: 1 USD = 83 INR
+  const usdToInr = 83;
+  const perDayInr = car.price * usdToInr;
   const totalCostInr = days > 0 ? days * perDayInr : 0;
 
   const canSubmit = pickupDate && returnDate && days > 0 && name.trim() && email.trim();
