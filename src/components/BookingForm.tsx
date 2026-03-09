@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format, differenceInDays } from "date-fns";
 import { CalendarIcon, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, convertUsdToInr } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,9 +27,8 @@ const BookingForm = ({ car }: { car: Car }) => {
 
   const days = pickupDate && returnDate ? differenceInDays(returnDate, pickupDate) : 0;
   const totalCost = days > 0 ? days * car.price : 0;
-  // Proportional conversion: 1 USD = 83 INR
-  const usdToInr = 83;
-  const perDayInr = car.price * usdToInr;
+  // Use utility for conversion
+  const perDayInr = convertUsdToInr(car.price);
   const totalCostInr = days > 0 ? days * perDayInr : 0;
 
   const canSubmit = pickupDate && returnDate && days > 0 && name.trim() && email.trim();
@@ -55,10 +54,8 @@ const BookingForm = ({ car }: { car: Car }) => {
         <div>
           <p className="text-sm text-muted-foreground">Price per day</p>
           <div className="flex items-end gap-2">
-            <span className="text-3xl font-display font-bold text-primary">${car.price}</span>
-            <span className="text-muted-foreground pb-0.5">USD / day</span>
-            <span className="text-lg font-display font-bold text-green-600">₹{perDayInr}</span>
-            <span className="text-muted-foreground pb-0.5">INR / day</span>
+            <span className="text-3xl font-display font-bold text-primary">₹{perDayInr}</span>
+            <span className="text-muted-foreground pb-0.5">/day</span>
           </div>
         </div>
 
@@ -159,22 +156,22 @@ const BookingForm = ({ car }: { car: Car }) => {
         {days > 0 && (
           <div className="border-t border-border pt-4 space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>${car.price} × {days} day{days > 1 ? "s" : ""}</span>
-              <span>${totalCost} USD</span>
+              <span>₹{perDayInr} × {days} day{days > 1 ? "s" : ""}</span>
+              <span>₹{totalCostInr}</span>
             </div>
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Service fee</span>
-              <span>$0</span>
+              <span>₹0</span>
             </div>
             <div className="flex justify-between font-display font-bold text-foreground text-lg pt-2 border-t border-border">
               <span>Total</span>
-              <span className="text-primary">${totalCost} USD / <span className="text-green-600">₹{totalCostInr} INR</span></span>
+              <span className="text-primary">₹{totalCostInr}</span>
             </div>
           </div>
         )}
 
         <Button type="submit" variant="hero" className="w-full" disabled={!canSubmit}>
-          {days > 0 ? `Reserve for $${totalCost} / ₹${totalCostInr}` : "Select dates to book"}
+          {days > 0 ? `Reserve for ₹${totalCostInr}` : "Select dates to book"}
         </Button>
       </form>
 
@@ -209,7 +206,7 @@ const BookingForm = ({ car }: { car: Car }) => {
             </div>
             <div className="flex justify-between border-t border-border pt-3">
               <span className="text-muted-foreground">Total</span>
-              <span className="font-display font-bold text-primary text-lg">${totalCost} USD / <span className="text-green-600">₹{totalCostInr} INR</span></span>
+              <span className="font-display font-bold text-primary text-lg">₹{totalCostInr}</span>
             </div>
           </div>
           <Button onClick={handleClose} className="w-full mt-2">Done</Button>

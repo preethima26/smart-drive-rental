@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { Car } from "@/data/cars";
+import { convertUsdToInr } from "@/lib/utils";
 
 const CarCard = ({ car }: { car: Car }) => (
   <Link to={`/cars/${car.id}`} className="group block">
@@ -20,7 +21,7 @@ const CarCard = ({ car }: { car: Car }) => (
         </div>
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-2xl font-display font-bold text-primary">${car.price}</span>
+            <span className="text-2xl font-display font-bold text-primary">₹{convertUsdToInr(car.price)}</span>
             <span className="text-sm text-muted-foreground">/day</span>
           </div>
           <Button size="sm">Book Now</Button>
