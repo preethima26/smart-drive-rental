@@ -27,9 +27,12 @@ const BookingForm = ({ car }: { car: Car }) => {
 
   const days = pickupDate && returnDate ? differenceInDays(returnDate, pickupDate) : 0;
   const totalCost = days > 0 ? days * car.price : 0;
-  // Conversion rate: 1 USD = 83 INR (approx, update as needed)
-  const usdToInr = 83;
-  const totalCostInr = totalCost * usdToInr;
+  // Fixed conversion: $120 per day = ₹2000 per day
+  const fixedUsd = 120;
+  const fixedInr = 2000;
+  // Calculate per-day INR based on USD price
+  const perDayInr = car.price === fixedUsd ? fixedInr : Math.round((car.price / fixedUsd) * fixedInr);
+  const totalCostInr = days > 0 ? days * perDayInr : 0;
 
   const canSubmit = pickupDate && returnDate && days > 0 && name.trim() && email.trim();
 
@@ -56,7 +59,7 @@ const BookingForm = ({ car }: { car: Car }) => {
           <div className="flex items-end gap-2">
             <span className="text-3xl font-display font-bold text-primary">${car.price}</span>
             <span className="text-muted-foreground pb-0.5">USD / day</span>
-            <span className="text-lg font-display font-bold text-green-600">₹{car.price * usdToInr}</span>
+            <span className="text-lg font-display font-bold text-green-600">₹{perDayInr}</span>
             <span className="text-muted-foreground pb-0.5">INR / day</span>
           </div>
         </div>
