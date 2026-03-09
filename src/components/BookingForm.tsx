@@ -27,6 +27,9 @@ const BookingForm = ({ car }: { car: Car }) => {
 
   const days = pickupDate && returnDate ? differenceInDays(returnDate, pickupDate) : 0;
   const totalCost = days > 0 ? days * car.price : 0;
+  // Conversion rate: 1 USD = 83 INR (approx, update as needed)
+  const usdToInr = 83;
+  const totalCostInr = totalCost * usdToInr;
 
   const canSubmit = pickupDate && returnDate && days > 0 && name.trim() && email.trim();
 
@@ -50,9 +53,11 @@ const BookingForm = ({ car }: { car: Car }) => {
       <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 space-y-5 sticky top-24">
         <div>
           <p className="text-sm text-muted-foreground">Price per day</p>
-          <div className="flex items-end gap-1">
+          <div className="flex items-end gap-2">
             <span className="text-3xl font-display font-bold text-primary">${car.price}</span>
-            <span className="text-muted-foreground pb-0.5">/day</span>
+            <span className="text-muted-foreground pb-0.5">USD / day</span>
+            <span className="text-lg font-display font-bold text-green-600">₹{car.price * usdToInr}</span>
+            <span className="text-muted-foreground pb-0.5">INR / day</span>
           </div>
         </div>
 
@@ -154,7 +159,7 @@ const BookingForm = ({ car }: { car: Car }) => {
           <div className="border-t border-border pt-4 space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>${car.price} × {days} day{days > 1 ? "s" : ""}</span>
-              <span>${totalCost}</span>
+              <span>${totalCost} USD</span>
             </div>
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Service fee</span>
@@ -162,13 +167,13 @@ const BookingForm = ({ car }: { car: Car }) => {
             </div>
             <div className="flex justify-between font-display font-bold text-foreground text-lg pt-2 border-t border-border">
               <span>Total</span>
-              <span className="text-primary">${totalCost}</span>
+              <span className="text-primary">${totalCost} USD / <span className="text-green-600">₹{totalCostInr} INR</span></span>
             </div>
           </div>
         )}
 
         <Button type="submit" variant="hero" className="w-full" disabled={!canSubmit}>
-          {days > 0 ? `Reserve for $${totalCost}` : "Select dates to book"}
+          {days > 0 ? `Reserve for $${totalCost} / ₹${totalCostInr}` : "Select dates to book"}
         </Button>
       </form>
 
@@ -203,7 +208,7 @@ const BookingForm = ({ car }: { car: Car }) => {
             </div>
             <div className="flex justify-between border-t border-border pt-3">
               <span className="text-muted-foreground">Total</span>
-              <span className="font-display font-bold text-primary text-lg">${totalCost}</span>
+              <span className="font-display font-bold text-primary text-lg">${totalCost} USD / <span className="text-green-600">₹{totalCostInr} INR</span></span>
             </div>
           </div>
           <Button onClick={handleClose} className="w-full mt-2">Done</Button>
